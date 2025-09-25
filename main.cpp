@@ -6,28 +6,28 @@ typedef struct {
     int* data;
     int size;
     int capacity; 
-} stack_t;
+} Stack;
 
 typedef enum {
-    FIRST,
-    SECOND,
-    THIRD
-} StackErr_t;
+    SUCCESS = 0,
+    ERROR_NULL_POINTER = 1, 
+    ERROR_ZERO_SIZE = 2
+} StackErrorCode;
 
 
-int StackPop(stack_t* stk, int* err=NULL);
-StackErr_t StackInit(stack_t* stk, int capacity);
-StackErr_t StackPush(stack_t* stk, int value);
-StackErr_t StackDestroy(stack_t* stk);
-int StackPop(stack_t* stk, int* err);
+int StackPop(Stack* stk, int* err=NULL);
+StackErrorCode StackInit(Stack* stk, int capacity);
+StackErrorCode StackPush(Stack* stk, int value);
+StackErrorCode StackDestroy(Stack* stk);
+int StackPop(Stack* stk, int* err);
 
-int PrintErrorsofStack(stack_t* stack, const char* file, const char* function, int line);
+int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line);
 #define StackDump(stack) PrintErrorsofStack(stack, __FILE__, __PRETTY_FUNCTION__, __LINE__)
 
 
 
 int main() {
-    stack_t stk1 = {};
+    Stack stk1 = {};
     int err = 0;
     StackInit(&stk1, 11);
     StackPush(&stk1, 5);
@@ -45,47 +45,88 @@ int main() {
 }
 
 
-int PrintErrorsofStack(stack_t* stack, const char* file, const char* function, int line) {
-    printf("StackDump called from %s: %d\n", file, line);
-    printf("Function: %s\n", function);
-    printf("Stack [%p]\n", stack);
+int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line) {
+    if (function != NULL) {
+        printf("StackDump called from %s file\n", file);
+    } else {
+        printf("Sorry, but the link to file name is NULL\n");
+    }
+
+    if (line > 0) {
+        printf("Line: %d\n", line);
+    } else {
+        printf("Sorry, but the line number is incorrect.\n");
+    }
+
+    if (function != NULL) {
+        printf("Function: %s\n", function);
+    } else {
+        printf("Sorry, but the link to function name is NULL\n");
+    }
+
+    if (stack != NULL) {
+        printf("Stack [%p]\n", stack);
+    } else {
+        printf("Sorry, but the link to stack link is NULL\n");
+    }
+
     printf("{\n");
-    printf("\tsize = %d\n", stack->size);
-    printf("\tcapacity = %d\n", stack->capacity);
-    printf("\tdata [%p]\n", (*stack).data);
+
+    if (stack->size > 0) {
+        printf("\tsize = %d\n", stack->size);
+    } else {
+        printf("Sorry, but the stack size is incorrect.\n");
+    }
+
+    if (stack->capacity > 0) {
+        printf("\tcapacity = %d\n", stack->capacity);
+    } else {
+        printf("Sorry, but the stack capacity is incorrect.\n");
+    }
+
+    if ((*stack).data != NULL) {
+        printf("\tdata [%p]\n", (*stack).data);
+    } else {
+        printf("Sorry, but the link to stack.data is NULL\n");
+    }
+    
     printf("\t{\n");
     for (int index = 0; index < stack->capacity; index++) {
-        printf("\t\t*[%d] = %d\n", index, stack->data[index]);
+        if ((*stack).data != NULL) {
+            printf("\t\t*[%d] = %d\n", index, stack->data[index]);
+        } else {
+            printf("Sorry, but the link to stack.data is NULL\n");
+        }
     }
     printf("\t}\n");
     printf("}\n");
 
 }
 
-StackErr_t StackInit(stack_t* stk, int capacity) {
+StackErrorCode StackInit(Stack* stk, int capacity) {
     stk->data = (int*) calloc(sizeof(int), capacity);
     stk->capacity = capacity;
     stk->size = 0;
 }
 
-StackErr_t StackPush(stack_t* stk, int value) {
+StackErrorCode StackPush(Stack* stk, int value) {
     stk->data[stk->size] = value;   
     stk->size = stk->size + 1;
-    return THIRD;
+    return SUCCESS;
  
 }
 
 
-StackErr_t StackDestroy(stack_t* stk) {
+StackErrorCode StackDestroy(Stack* stk) {
     free(stk->data);
     stk->data = NULL;
 }
 
 
-int StackPop(stack_t* stk, int *err) {
+int StackPop(Stack* stk, int *err) {
     if (stk->size == 0) {
-        *err = FIRST;
-        return 0;
+        *err = ERROR_ZERO_SIZE;
+        return ERROR_ZERO_SIZE;
     }
     int value = stk->data[stk->size - 1];
     stk->data[stk->size] = 0;
