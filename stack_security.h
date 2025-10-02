@@ -6,6 +6,7 @@
 
 StackErrorCode CheckCanary(Stack* stk);
 int StackVerify(Stack* stack);
-int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line);
+int PreparationForStackDump(Stack* stack, const char* file, const char* function, int line);
+int PrintErrorsInfo(int errors);
 
 #endif

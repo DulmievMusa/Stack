@@ -36,11 +36,8 @@ int StackVerify(Stack* stack) {
     return errors;
 }
 
-int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line) {
+int PreparationForStackDump(Stack* stack, const char* file, const char* function, int line) {
     printf("\n" FG_BG_ANSI "<StackDump>" RESET_ANSI "\n");
-    if (CheckCanary(stack)) { // 
-        printf("\n" FG_BG_ANSI "The edges of the stack are damaged" RESET_ANSI "\n");
-    }
     if (function != NULL) {
         printf("StackDump called from %s file\n", file);
     } else {
@@ -86,9 +83,12 @@ int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int
         }
 
         if ((*stack).data != NULL) {
+            if (CheckCanary(stack)) { // 
+                printf("\n" FG_BG_ANSI "The edges of the stack are damaged" RESET_ANSI "\n");
+            }
             printf("\tdata [%p]\n", (*stack).data);
         } else {
-            printf("\tLink to stack.data is NULL. Info: ");
+            printf("Link to stack.data is NULL. Info: ");
             AssertOfMusa(0, file, function, line);
         }
     
@@ -100,6 +100,26 @@ int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int
             printf("\t}\n");
         }
         printf("}\n");
+    }
+    return 0;
+}
+
+
+int PrintErrorsInfo(int errors) {
+    if (IsCanaryDiedError(errors)) {
+        printf("Canary died\n"); 
+    }
+    if (IsStackNullError(errors)) {
+        printf("Stack pointer is null\n");
+    }
+    if (IsSizeNegativeError(errors)) {
+        printf("Size is Negative\n");
+    }
+    if (IsCapacityNegativeError(errors)) {
+        printf("Capacity is Negative\n");
+    }
+    if (IsStackDataNullError(errors)) {
+        printf("Data pointer is null\n");
     }
     return 0;
 }

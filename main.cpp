@@ -23,26 +23,12 @@ int main() {
     char command[30];
     int how_much_read = 0;
     int value = 0;
-    /*stk.data[0] = 666;
+    //stk.data[0] = 666;
     stk.data = NULL;
     stk.size = -1;
-    stk.capacity = -1;*/
+    stk.capacity = -1;
     int errors = 0;
-    if (IsCanaryDiedError(errors)) {
-        printf("Canary died\n"); 
-    }
-    if (IsStackNullError(errors)) {
-        printf("Stack null\n");
-    }
-    if (IsSizeNegativeError(errors)) {
-        printf("Size is not ok\n");
-    }
-    if (IsCapacityNegativeError(errors)) {
-        printf("Capacity is not okey\n");
-    }
-    if (IsStackDataNullError(errors)) {
-        printf("data null\n");
-    }
+    PrintErrorsInfo(errors);
     StackDump(&stk);
     int need_to_finish = 0;
     while (need_to_finish == 0) {

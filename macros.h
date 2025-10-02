@@ -6,7 +6,7 @@
 #define RESET_ANSI "\033[0m"
 #define TEST_FALED_ANSI "\033[44;97m"
 #define MyAssert(need_to_call_assert) AssertOfMusa(need_to_call_assert, __FILE__, __PRETTY_FUNCTION__, __LINE__)
-#define StackDump(stack) PrintErrorsofStack(stack, __FILE__, __PRETTY_FUNCTION__, __LINE__)
+#define StackDump(stack) PreparationForStackDump(stack, __FILE__, __PRETTY_FUNCTION__, __LINE__)
 
 
 #define SetStackIsNullError(errors) errors |= (1 << 0)
