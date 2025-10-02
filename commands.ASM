@@ -1,0 +1,3 @@
+PUSH 20
+ADD 5
+PUSH 30

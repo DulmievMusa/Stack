@@ -24,5 +24,6 @@
 #define IsStackDataNullError(errors) errors & (1 << 4)
 #define IsSizeNullError(errors) errors & (1 << 5)
 
+#define SOURCE "commands.asm"
 
 #endif

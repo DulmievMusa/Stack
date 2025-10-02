@@ -8,5 +8,6 @@ main.o
 stack_operations.o
 asserts.o
 stack_security.o
+compiler.o
 
 main.exe

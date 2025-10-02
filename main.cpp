@@ -9,12 +9,10 @@
 #include "asserts.h"
 #include "stack_operations.h"
 #include "stack_security.h"
+#include "compiler.h"
 
 
 int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors);
-
-
-
 
 int main() {
     Stack stk = {};
@@ -24,18 +22,21 @@ int main() {
     int how_much_read = 0;
     int value = 0;
     //stk.data[0] = 666;
-    stk.data = NULL;
-    stk.size = -1;
-    stk.capacity = -1;
+    // stk.data = NULL;
+    // stk.size = -1;
+    // stk.capacity = -1;
     int errors = 0;
     PrintErrorsInfo(errors);
     StackDump(&stk);
     int need_to_finish = 0;
+
+    get_byte_code(SOURCE);
+
     while (need_to_finish == 0) {
         fgets(input, sizeof(input), stdin);
         how_much_read = sscanf(input, "%29s %d", command, &value);
         need_to_finish = DoCommand(&stk, command, value, how_much_read, &errors);
-        StackDump(&stk);
+        // StackDump(&stk);
     }
 }
 
