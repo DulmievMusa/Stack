@@ -1,3 +1,11 @@
-a.exe
 vn.c
 vn2.c
+test.c
+
+trash.cpp
+
+main.o
+stack_operations.o
+asserts.o
+
+main.exe

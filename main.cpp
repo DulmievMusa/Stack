@@ -3,62 +3,22 @@
 #include <string.h>
 #include <math.h>
 
+#include "macros.h"
+#include "data_types.h"
+#include "constants.h"
+#include "asserts.h"
 
-#define FG_BG_ANSI "\033[41;97m"
-#define RESET_ANSI "\033[0m"
-#define TEST_FALED_ANSI "\033[44;97m"
-#define MyAssert(need_to_call_assert) AssertOfMusa(need_to_call_assert, __FILE__, __PRETTY_FUNCTION__, __LINE__)
-#define StackDump(stack) PrintErrorsofStack(stack, __FILE__, __PRETTY_FUNCTION__, __LINE__)
-
-
-#define SetStackIsNullError(errors) errors |= (1 << 0)
-#define SetCanaryDiedError(errors) errors |= (1 << 1)
-#define SetSizeisNegativeError(errors) errors |= (1 << 2)
-#define SetCapacityIsNegativeError(errors) errors |= (1 << 3)
-#define SetStackDataisNullError(errors) errors |= (1 << 4)
-#define SetSizeIsNullError(errors) errors |= (1 << 5)
-
-
-#define IsStackNullError(errors) errors & (1 << 0)
-#define IsCanaryDiedError(errors) errors & (1 << 1)
-#define IsSizeNegativeError(errors) errors & (1 << 2)
-#define IsCapacityNegativeError(errors) errors & (1 << 3)
-#define IsStackDataNullError(errors) errors & (1 << 4)
-#define IsSizeNullError(errors) errors & (1 << 5)
-
-
-
-
-typedef struct {
-    int* data;
-    int size;
-    int capacity; 
-} Stack;
-
-typedef enum {
-    SUCCESS = 0,
-    ERROR_NULL_POINTER = 1, 
-    ERROR_ZERO_SIZE = 2,
-    ERROR_CANARY_DIED = 666
-} StackErrorCode;
-
-
-
-
-
-const int CANARY = 56191;
 // int err = 0;
 
 
 // int StackPop(Stack* stk, int* err=NULL);
 int StackInit(Stack* stk, int capacity);
 int StackPush(Stack* stk, int value);
-StackErrorCode StackDestroy(Stack* stk);
+int StackDestroy(Stack* stk);
 int StackVerify(Stack* stack);
 int StackPop(Stack* , int* errors);
 StackErrorCode CheckCanary(Stack* stk);
 int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors);
-
 int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line);
 
 
@@ -95,7 +55,6 @@ int main() {
     StackDump(&stk);
     int need_to_finish = 0;
     while (need_to_finish == 0) {
-        printf("WTF\n");
         fgets(input, sizeof(input), stdin);
         how_much_read = sscanf(input, "%29s %d", command, &value);
         need_to_finish = DoCommand(&stk, command, value, how_much_read, &errors);
@@ -106,34 +65,10 @@ int main() {
 
 }
 
-int StackVerify(Stack* stack) {
-    int errors = 0;
-    if (stack == NULL) {
-        SetStackIsNullError(errors);
-        return errors;
-    }
-    if (stack->data == NULL) {
-        SetStackDataisNullError(errors);
-    } else {
-        if (CheckCanary(stack)) {
-            SetCanaryDiedError(errors); 
-        }
-    }
-    if (stack->size < 0) {
-        SetSizeisNegativeError(errors);
-    }
-    if (stack->capacity < 0) {
-        SetCapacityIsNegativeError(errors);
-    }
-    if (stack->size == 0) {
-        SetSizeIsNullError(errors);
-    }
 
-    return errors;
-}
 
 int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors) {
-    // *errors = 0;
+    *errors = StackVerify(stk);
     if (strcmp(command, "PUSH") == 0 && how_much_read == 2) {
         StackPush(stk, value);
     } else if (strcmp(command, "OUT") == 0 && how_much_read == 1 && stk->size > 0) {
@@ -142,6 +77,10 @@ int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* erro
         int a = StackPop(stk, errors);
         int b = StackPop(stk, errors);
         StackPush(stk, b - a);
+    } else if (strcmp(command, "ADD") == 0 && how_much_read == 1 && stk->size > 1) {
+        int a = StackPop(stk, errors);
+        int b = StackPop(stk, errors);
+        StackPush(stk, b + a);
     } else if (strcmp(command, "HLT") == 0 && how_much_read == 1) {
         return 1;
     } else if (strcmp(command, "MUL") == 0 && how_much_read == 1 && stk->size > 1) {
@@ -157,19 +96,14 @@ int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* erro
     } else {
         printf("Wrong command. Try Again\n");
     }
+    if (!(*errors))  {
+        *errors = StackVerify(stk);
+    }
     return 0;
 }
 
 
-void AssertOfMusa(int need_to_call_assert, const char *file, const char *function, int line) {
-    if (!need_to_call_assert) {
-        //printf(FG_BG_ANSI "Assertion failed: ");
-        printf(FG_BG_ANSI "File: %s, ", file);
-        printf(FG_BG_ANSI "Function: %s, ", function);
-        printf(FG_BG_ANSI "Line: %d " RESET_ANSI "\n", line);
-        printf("\n");
-    }
-}
+
 
 
 int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line) {
@@ -237,7 +171,7 @@ int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int
         }
         printf("}\n");
     }
-
+    return 0;
 }
 
 int StackInit(Stack* stk, int capacity) {
@@ -251,53 +185,25 @@ int StackInit(Stack* stk, int capacity) {
     stk->size = 0;
     stk->data[0] = CANARY;
     stk->data[capacity + 1] = CANARY;
-    return errors;
-}
-
-int StackPush(Stack* stk, int value) { // stack verify, propagate_error? fail_if_error? assert_never_fsils? ignore_error?
-    int errors = StackVerify(stk);
-
-    if (stk->size == stk->capacity) {
-        stk->data[stk->capacity + 1] = 0;
-        stk->data = (int*) realloc(stk->data, sizeof(int) * (stk->capacity * 2)  + 2);
-        stk->capacity = stk->capacity * 2;
-        stk->data[stk->capacity + 1] = CANARY;
-    }
-    stk->data[stk->size + 1] = value;   
-    stk->size = stk->size + 1;
-
     errors = StackVerify(stk);
     return errors;
- 
 }
 
 
-StackErrorCode StackDestroy(Stack* stk) {
-    int errors = StackVerify(stk);
 
+
+int StackDestroy(Stack* stk) {
+    int errors = StackVerify(stk);
+    if (IsStackNullError(errors) || IsStackDataNullError(errors)) {
+        return errors;
+    }
     free(stk->data);
     stk->data = NULL;
+    stk->size = 0;
+    stk->capacity = 0;
+    return 0;
 }
 
 
-int StackPop(Stack* stk, int* errors) {
-    *errors = 0;
-    *errors = StackVerify(stk);
-    if (stk->size == 0) {
-        SetSizeIsNullError(*errors);
-    }
-    int value = stk->data[stk->size];
-    stk->data[stk->size] = 0;
-    stk->size = stk->size - 1;
-    return value;
-}
 
-StackErrorCode CheckCanary(Stack* stk) {
-    if (stk == NULL) {
-        return ERROR_NULL_POINTER;
-    }
-    if (stk->data[0] != CANARY || stk->data[stk->capacity + 1] != CANARY) {
-        return ERROR_CANARY_DIED;
-    }
-    return SUCCESS;
-}
+
