@@ -7,19 +7,11 @@
 #include "data_types.h"
 #include "constants.h"
 #include "asserts.h"
+#include "stack_operations.h"
+#include "stack_security.h"
 
-// int err = 0;
 
-
-// int StackPop(Stack* stk, int* err=NULL);
-int StackInit(Stack* stk, int capacity);
-int StackPush(Stack* stk, int value);
-int StackDestroy(Stack* stk);
-int StackVerify(Stack* stack);
-int StackPop(Stack* , int* errors);
-StackErrorCode CheckCanary(Stack* stk);
 int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors);
-int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line);
 
 
 
@@ -37,7 +29,7 @@ int main() {
     stk.capacity = -1;*/
     int errors = 0;
     if (IsCanaryDiedError(errors)) {
-        printf("Canary died\n"); // Выведет "Флаг 1 установлен"
+        printf("Canary died\n"); 
     }
     if (IsStackNullError(errors)) {
         printf("Stack null\n");
@@ -51,7 +43,6 @@ int main() {
     if (IsStackDataNullError(errors)) {
         printf("data null\n");
     }
-    //printf("number %d\n", errors);
     StackDump(&stk);
     int need_to_finish = 0;
     while (need_to_finish == 0) {
@@ -60,9 +51,6 @@ int main() {
         need_to_finish = DoCommand(&stk, command, value, how_much_read, &errors);
         StackDump(&stk);
     }
-   
-
-
 }
 
 
@@ -101,109 +89,3 @@ int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* erro
     }
     return 0;
 }
-
-
-
-
-
-int PrintErrorsofStack(Stack* stack, const char* file, const char* function, int line) {
-    printf("\n" FG_BG_ANSI "<StackDump>" RESET_ANSI "\n");
-    if (CheckCanary(stack)) { // 
-        printf("\n" FG_BG_ANSI "The edges of the stack are damaged" RESET_ANSI "\n");
-    }
-    if (function != NULL) {
-        printf("StackDump called from %s file\n", file);
-    } else {
-        printf("Link to file name is NULL. Info: ");
-        AssertOfMusa(0, file, function, line);
-    }
-
-    if (line > 0) {
-        printf("Line: %d\n", line);
-    } else {
-        printf("Line number is incorrect: %d. Info: ", line);
-        AssertOfMusa(0, file, function, line);
-    }
-
-    if (function != NULL) {
-        printf("Function: %s\n", function);
-    } else {
-        printf("Link to function name is NULL. Info: ");
-        AssertOfMusa(0, file, function, line);
-    }
-
-    if (stack != NULL) { //
-        printf("Stack [%p]\n", stack);
-    } else {
-        printf("Link to stack link is NULL. Info: ");
-        AssertOfMusa(0, file, function, line);
-    }
-
-    if (stack != NULL) {
-        printf("{\n");
-        if (stack->size >= 0) {
-            printf("\tsize = %d\n", stack->size);
-        } else {
-            printf("Stack size is incorrect: %d. Info: ", stack->size);
-            AssertOfMusa(0, file, function, line);
-        }
-
-        if (stack->capacity > 0) {
-            printf("\tcapacity = %d\n", stack->capacity);
-        } else {
-            printf("Stack capacity is incorrect: %d. Info: ", stack->capacity);
-            AssertOfMusa(0, file, function, line);
-        }
-
-        if ((*stack).data != NULL) {
-            printf("\tdata [%p]\n", (*stack).data);
-        } else {
-            printf("\tLink to stack.data is NULL. Info: ");
-            AssertOfMusa(0, file, function, line);
-        }
-    
-        if ((*stack).data != NULL) {
-            printf("\t{\n");
-            for (int index = 0; index < stack->capacity + 2; index++) {
-                printf("\t\t*[%d] = %d\n", index, stack->data[index]);
-            }
-            printf("\t}\n");
-        }
-        printf("}\n");
-    }
-    return 0;
-}
-
-int StackInit(Stack* stk, int capacity) {
-    int errors = 0;
-    if (stk == NULL) {
-        SetStackIsNullError(errors);
-        return errors;
-    }
-    stk->data = (int*) calloc(sizeof(int), capacity + 2);
-    stk->capacity = capacity;
-    stk->size = 0;
-    stk->data[0] = CANARY;
-    stk->data[capacity + 1] = CANARY;
-    errors = StackVerify(stk);
-    return errors;
-}
-
-
-
-
-int StackDestroy(Stack* stk) {
-    int errors = StackVerify(stk);
-    if (IsStackNullError(errors) || IsStackDataNullError(errors)) {
-        return errors;
-    }
-    free(stk->data);
-    stk->data = NULL;
-    stk->size = 0;
-    stk->capacity = 0;
-    return 0;
-}
-
-
-
-

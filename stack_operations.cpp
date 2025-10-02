@@ -5,14 +5,37 @@
 #include "macros.h"
 #include "constants.h"
 #include "stack_operations.h"
+#include "stack_security.h"
 
 
-StackErrorCode CheckCanary(Stack* stk) {
-    if (stk->data[0] != CANARY || stk->data[stk->capacity + 1] != CANARY) {
-        return ERROR_CANARY_DIED;
+int StackInit(Stack* stk, int capacity) {
+    int errors = 0;
+    if (stk == NULL) {
+        SetStackIsNullError(errors);
+        return errors;
     }
-    return SUCCESS;
+    stk->data = (int*) calloc(sizeof(int), capacity + 2);
+    stk->capacity = capacity;
+    stk->size = 0;
+    stk->data[0] = CANARY;
+    stk->data[capacity + 1] = CANARY;
+    errors = StackVerify(stk);
+    return errors;
 }
+
+int StackDestroy(Stack* stk) {
+    int errors = StackVerify(stk);
+    if (IsStackNullError(errors) || IsStackDataNullError(errors)) {
+        return errors;
+    }
+    free(stk->data);
+    stk->data = NULL;
+    stk->size = 0;
+    stk->capacity = 0;
+    return 0;
+}
+
+
 
 
 int StackPush(Stack* stk, int value) { // stack verify, propagate_error? fail_if_error? assert_never_fsils? ignore_error?
@@ -33,29 +56,6 @@ int StackPush(Stack* stk, int value) { // stack verify, propagate_error? fail_if
     errors = StackVerify(stk);
     return errors;
  
-}
-
-int StackVerify(Stack* stack) {
-    int errors = 0;
-    if (stack == NULL) {
-        SetStackIsNullError(errors);
-        return errors;
-    }
-    if (stack->data == NULL) {
-        SetStackDataisNullError(errors);
-    } else {
-        if (CheckCanary(stack)) {
-            SetCanaryDiedError(errors); 
-        }
-    }
-    if (stack->size < 0) {
-        SetSizeisNegativeError(errors);
-    }
-    if (stack->capacity < 0) {
-        SetCapacityIsNegativeError(errors);
-    }
-
-    return errors;
 }
 
 

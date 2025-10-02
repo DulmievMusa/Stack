@@ -7,5 +7,6 @@ trash.cpp
 main.o
 stack_operations.o
 asserts.o
+stack_security.o
 
 main.exe
