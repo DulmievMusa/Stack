@@ -1,7 +1,6 @@
 PUSH 20
-ADD
 PUSH 30
-
-
-MUL
-
+PUSH 40
+ADD
+ADD
+OUT
