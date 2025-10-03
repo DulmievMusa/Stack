@@ -15,7 +15,7 @@
 int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors);
 
 int main() {
-    Stack stk = {};
+    /*Stack stk = {};
     StackInit(&stk, 6);
     char input[100];
     char command[30];
@@ -30,14 +30,14 @@ int main() {
     StackDump(&stk);
     int need_to_finish = 0;
 
-    get_byte_code(SOURCE);
-
     while (need_to_finish == 0) {
         fgets(input, sizeof(input), stdin);
         how_much_read = sscanf(input, "%29s %d", command, &value);
         need_to_finish = DoCommand(&stk, command, value, how_much_read, &errors);
         // StackDump(&stk);
-    }
+    }*/
+
+    CreateByteCodeFile(AsmCodeFile, ByteCodeFile);
 }
 
 

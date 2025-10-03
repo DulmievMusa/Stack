@@ -1,3 +1,6 @@
 PUSH 20
-ADD 5
+ADD
 PUSH 30
+
+
+MUL

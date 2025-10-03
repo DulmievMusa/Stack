@@ -4,33 +4,116 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "macros.h"
+#include <string.h>
 
-long GetFileSize(const char* source) {
+#define MAX_LINE_LENGTH 100
+#define MAX_COMMAND_LENGTH 15
+
+
+/*long GetFileSize(const char* source) {
 
     const char *filename = source;
     struct stat file_info;
     stat(filename, &file_info);
     return file_info.st_size;
 }
+*/
 
 
-
-int* get_byte_code(const char * source) {
-        printf("\n\n\n");
+int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_file_name) {
+    /*printf("\n\n\n");
     long file_size = GetFileSize(source);
     char* text = GetText(source, file_size);
 
     printf("%s", text);
-    return NULL;
+    return NULL;*/
+
+    FILE *asm_code_file = fopen(asm_code_file_name, "r");
+    FILE *byte_code_file = fopen(byte_code_file_name, "w");
+    if (asm_code_file == NULL || byte_code_file == NULL) {
+        printf("Ошибка открытия файла\n");
+        return 1;
+    }
+
+    char line[MAX_LINE_LENGTH];
+    char command[MAX_COMMAND_LENGTH];
+    int number;
+
+    while (fgets(line, sizeof(line), asm_code_file)) {
+        line[strcspn(line, "\n")] = 0;
+        int how_much_read = sscanf(line, "%s %d", command, &number);
+        AddCommandToFile(byte_code_file, how_much_read, command, number);
+
+    }
+
+    fclose(asm_code_file);
+    return 0;
 }
 
-char* GetText(const char* source, int file_size) {
-    assert(source != NULL);
 
-    FILE* source_file = fopen(source, "r" );
-    char* text = (char*) calloc(sizeof(char), (file_size + 1)); 
-    fread(text, 1, file_size, source_file); 
-    fclose (source_file);
-    text[file_size] = '\0';
-    return text;
+
+int AddCommandToFile(FILE *byte_code_file, int how_much_read, const char* command, int number) {
+    if (how_much_read == 2) {
+        fprintf(byte_code_file, "%d %d\n", CommandToNumber(command), number);
+    } else if (how_much_read == 1) {
+        fprintf(byte_code_file, "%d\n", CommandToNumber(command));
+    }
+    return 0;
 }
+
+
+int CommandToNumber(const char* command) {
+    if (strcmp(command, "HLT") == 0){
+        return 0;
+    } else if (strcmp(command, "PUSH") == 0) {
+        return 1;
+    } else if (strcmp(command, "MUL") == 0){
+        return 2;
+    } else if (strcmp(command, "SUB") == 0){
+        return 3;
+    } else if (strcmp(command, "OUT") == 0){
+        return 4;
+    } else if (strcmp(command, "ADD") == 0){
+        return 5;
+    } else if (strcmp(command, "DIV") == 0){
+        return 6;
+    } else if (strcmp(command, "SQRT") == 0){
+        return 7;
+    }
+    return -1;
+}
+
+/*int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors) {
+    *errors = StackVerify(stk);
+    if (strcmp(command, "PUSH") == 0 && how_much_read == 2) {
+        StackPush(stk, value);
+    } else if (strcmp(command, "OUT") == 0 && how_much_read == 1 && stk->size > 0) {
+        printf("%d\n", StackPop(stk, errors));
+    } else if (strcmp(command, "SUB") == 0 && how_much_read == 1 && stk->size > 1) {
+        int a = StackPop(stk, errors);
+        int b = StackPop(stk, errors);
+        StackPush(stk, b - a);
+    } else if (strcmp(command, "ADD") == 0 && how_much_read == 1 && stk->size > 1) {
+        int a = StackPop(stk, errors);
+        int b = StackPop(stk, errors);
+        StackPush(stk, b + a);
+    } else if (strcmp(command, "HLT") == 0 && how_much_read == 1) {
+        return 1;
+    } else if (strcmp(command, "MUL") == 0 && how_much_read == 1 && stk->size > 1) {
+        int a = StackPop(stk, errors);
+        int b = StackPop(stk, errors);
+        StackPush(stk, a * b);
+    } else if (strcmp(command, "SQRT") == 0 && how_much_read == 1 && stk->size > 0) {
+        StackPush(stk, (int) sqrt(StackPop(stk, errors)));
+    } else if (strcmp(command, "DIV") == 0 && how_much_read == 1 && stk->size > 1) {
+        int a = StackPop(stk, errors);
+        int b = StackPop(stk, errors);
+        StackPush(stk, (int) ((double) b / a));
+    } else {
+        printf("Wrong command. Try Again\n");
+    }
+    if (!(*errors))  {
+        *errors = StackVerify(stk);
+    }
+    return 0;
+} */
