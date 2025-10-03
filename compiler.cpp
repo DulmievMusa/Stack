@@ -3,11 +3,13 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "macros.h"
+//#include "macros.h"
 #include <string.h>
 
 #define MAX_LINE_LENGTH 100
 #define MAX_COMMAND_LENGTH 15
+#define AsmCodeFile "commands.asm"
+#define ByteCodeFile "byte_code.txt"
 
 
 /*long GetFileSize(const char* source) {
@@ -18,6 +20,10 @@
     return file_info.st_size;
 }
 */
+
+int main() {
+    CreateByteCodeFile(AsmCodeFile, ByteCodeFile);
+}
 
 
 int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_file_name) {
@@ -31,7 +37,7 @@ int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_fil
     FILE *asm_code_file = fopen(asm_code_file_name, "r");
     FILE *byte_code_file = fopen(byte_code_file_name, "w");
     if (asm_code_file == NULL || byte_code_file == NULL) {
-        printf("Ошибка открытия файла\n");
+        printf("Can\'t open file\n");
         return 1;
     }
 
@@ -82,38 +88,3 @@ int CommandToNumber(const char* command) {
     }
     return -1;
 }
-
-/*int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors) {
-    *errors = StackVerify(stk);
-    if (strcmp(command, "PUSH") == 0 && how_much_read == 2) {
-        StackPush(stk, value);
-    } else if (strcmp(command, "OUT") == 0 && how_much_read == 1 && stk->size > 0) {
-        printf("%d\n", StackPop(stk, errors));
-    } else if (strcmp(command, "SUB") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, b - a);
-    } else if (strcmp(command, "ADD") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, b + a);
-    } else if (strcmp(command, "HLT") == 0 && how_much_read == 1) {
-        return 1;
-    } else if (strcmp(command, "MUL") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, a * b);
-    } else if (strcmp(command, "SQRT") == 0 && how_much_read == 1 && stk->size > 0) {
-        StackPush(stk, (int) sqrt(StackPop(stk, errors)));
-    } else if (strcmp(command, "DIV") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, (int) ((double) b / a));
-    } else {
-        printf("Wrong command. Try Again\n");
-    }
-    if (!(*errors))  {
-        *errors = StackVerify(stk);
-    }
-    return 0;
-} */

@@ -9,12 +9,12 @@
 #include "asserts.h"
 #include "stack_operations.h"
 #include "stack_security.h"
-#include "compiler.h"
+//#include "compiler.h"
 
 
 int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors);
 
-int main() {
+int main(int argc, char * argv[]) {
     /*Stack stk = {};
     StackInit(&stk, 6);
     char input[100];
@@ -36,8 +36,7 @@ int main() {
         need_to_finish = DoCommand(&stk, command, value, how_much_read, &errors);
         // StackDump(&stk);
     }*/
-
-    CreateByteCodeFile(AsmCodeFile, ByteCodeFile);
+    printf("%d", argc);
 }
 
 
