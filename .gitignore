@@ -8,7 +8,9 @@ main.o
 stack_operations.o
 asserts.o
 stack_security.o
+byte_code_read.o
 
 
 main.exe
 compiler.exe
+a.exe

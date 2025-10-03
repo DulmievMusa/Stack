@@ -9,15 +9,17 @@
 #include "asserts.h"
 #include "stack_operations.h"
 #include "stack_security.h"
+#include "byte_code_read.h"
 //#include "compiler.h"
 
 
 int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors);
 
-int main(int argc, char * argv[]) {
-    /*Stack stk = {};
+int main() {
+    Stack stk = {};
     StackInit(&stk, 6);
-    char input[100];
+    StackDump(&stk);
+    /*char input[100];
     char command[30];
     int how_much_read = 0;
     int value = 0;
@@ -27,7 +29,7 @@ int main(int argc, char * argv[]) {
     // stk.capacity = -1;
     int errors = 0;
     PrintErrorsInfo(errors);
-    StackDump(&stk);
+
     int need_to_finish = 0;
 
     while (need_to_finish == 0) {
@@ -36,7 +38,24 @@ int main(int argc, char * argv[]) {
         need_to_finish = DoCommand(&stk, command, value, how_much_read, &errors);
         // StackDump(&stk);
     }*/
-    printf("%d", argc);
+   //char* byte_code = ReadByteCode(ByteCodeFile);
+
+   /*char *token;
+    
+    // Получаем первую подстроку
+    token = strtok(byte_code, "\n");
+    
+    // Получаем остальные подстроки
+    while (token != NULL) {
+        printf("Найдена строка: '%s'\n", token);
+        token = strtok(NULL, "\n");
+    }*/
+   int number_of_elements;
+   int* byte_code = ReadByteCode(ByteCodeFile, &number_of_elements);
+   for (int i = 0; i < number_of_elements; i++) {
+        printf("%d\n", *(byte_code + i));
+   }
+   
 }
 
 

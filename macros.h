@@ -24,4 +24,7 @@
 #define IsStackDataNullError(errors) errors & (1 << 4)
 #define IsSizeNullError(errors) errors & (1 << 5)
 
+#define AsmCodeFile "commands.asm"
+#define ByteCodeFile "byte_code.txt"
+
 #endif

@@ -3,13 +3,12 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 #include <assert.h>
-//#include "macros.h"
+#include "macros.h"
 #include <string.h>
 
 #define MAX_LINE_LENGTH 100
 #define MAX_COMMAND_LENGTH 15
-#define AsmCodeFile "commands.asm"
-#define ByteCodeFile "byte_code.txt"
+
 
 
 /*long GetFileSize(const char* source) {
@@ -41,28 +40,38 @@ int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_fil
         return 1;
     }
 
-    char line[MAX_LINE_LENGTH];
-    char command[MAX_COMMAND_LENGTH];
-    int number;
+    char line[MAX_LINE_LENGTH] = {0};
+    char command[MAX_COMMAND_LENGTH] = {0};
+    int number = 0;
 
     while (fgets(line, sizeof(line), asm_code_file)) {
-        line[strcspn(line, "\n")] = 0;
+        line[strcspn(line, "\n")] = '\0';
         int how_much_read = sscanf(line, "%s %d", command, &number);
-        AddCommandToFile(byte_code_file, how_much_read, command, number);
+        int error = AddCommandToFile(byte_code_file, how_much_read, command, number);
+        if (error) {
+            printf("ERROR\n");
+            break;
+        }
+
 
     }
 
     fclose(asm_code_file);
+    fclose(byte_code_file);
     return 0;
 }
 
 
 
 int AddCommandToFile(FILE *byte_code_file, int how_much_read, const char* command, int number) {
+    int command_code = CommandToNumber(command);
+    if (command_code == -1) {
+        return 1;
+    }
     if (how_much_read == 2) {
-        fprintf(byte_code_file, "%d %d\n", CommandToNumber(command), number);
+        fprintf(byte_code_file, "%d %d\n", command_code, number);
     } else if (how_much_read == 1) {
-        fprintf(byte_code_file, "%d\n", CommandToNumber(command));
+        fprintf(byte_code_file, "%d\n", command_code);
     }
     return 0;
 }
