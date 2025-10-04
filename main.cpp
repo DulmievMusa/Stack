@@ -20,44 +20,9 @@ int main() {
     Stack stk = {};
     StackInit(&stk, 6);
     StackDump(&stk);
-    /*char input[100];
-    char command[30];
-    int how_much_read = 0;
-    int value = 0;
-    //stk.data[0] = 666;
-    // stk.data = NULL;
-    // stk.size = -1;
-    // stk.capacity = -1;
-    int errors = 0;
-    PrintErrorsInfo(errors);
-
-    int need_to_finish = 0;
-
-    while (need_to_finish == 0) {
-        fgets(input, sizeof(input), stdin);
-        how_much_read = sscanf(input, "%29s %d", command, &value);
-        need_to_finish = DoCommand(&stk, command, value, how_much_read, &errors);
-        // StackDump(&stk);
-    }*/
-   //char* byte_code = ReadByteCode(ByteCodeFile);
-
-   /*char *token;
-    
-    // Получаем первую подстроку
-    token = strtok(byte_code, "\n");
-    
-    // Получаем остальные подстроки
-    while (token != NULL) {
-        printf("Найдена строка: '%s'\n", token);
-        token = strtok(NULL, "\n");
-    }*/
    int number_of_elements = 0;
    int* byte_code = ReadByteCode(ByteCodeFile, &number_of_elements);
    RunProgramm(&stk, byte_code, number_of_elements);
-   /*for (int i = 0; i < number_of_elements; i++) {
-        printf("%d\n", *(byte_code + i));
-   }*/
-
    
 }
 
