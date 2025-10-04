@@ -10,56 +10,9 @@
 #define MAX_COMMAND_LENGTH 15
 
 
-
-/*long GetFileSize(const char* source) {
-
-    const char *filename = source;
-    struct stat file_info;
-    stat(filename, &file_info);
-    return file_info.st_size;
-}
-*/
-
 int main() {
     CreateByteCodeFile(AsmCodeFile, ByteCodeFile);
 }
-
-
-/*int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_file_name) {
-    printf("\n\n\n");
-    long file_size = GetFileSize(source);
-    char* text = GetText(source, file_size);
-
-    printf("%s", text);
-    return NULL;
-
-    FILE *asm_code_file = fopen(asm_code_file_name, "r");
-    FILE *byte_code_file = fopen(byte_code_file_name, "w");
-    if (asm_code_file == NULL || byte_code_file == NULL) {
-        printf("Can\'t open file\n");
-        return 1;
-    }
-
-    char line[MAX_LINE_LENGTH] = {0};
-    char command[MAX_COMMAND_LENGTH] = {0};
-    int number = 0;
-
-    while (fgets(line, sizeof(line), asm_code_file)) {
-        line[strcspn(line, "\n")] = '\0';
-        int how_much_read = sscanf(line, "%s %d", command, &number);
-        int error = AddCommandToFile(byte_code_file, how_much_read, command, number);
-        if (error) {
-            printf("ERROR\n");
-            break;
-        }
-
-
-    }
-
-    fclose(asm_code_file);
-    fclose(byte_code_file);
-    return 0;
-}*/
 
 int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_file_name) {
     FILE *asm_code_file = fopen(asm_code_file_name, "r");

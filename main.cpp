@@ -132,37 +132,3 @@ int RunProgramm(Stack* stk, int* byte_code, int number_of_elements) {
 }
 
 
-int DoCommand(Stack* stk, char* command, int value, int how_much_read, int* errors) {
-    *errors = StackVerify(stk);
-    if (strcmp(command, "PUSH") == 0 && how_much_read == 2) {
-        StackPush(stk, value);
-    } else if (strcmp(command, "OUT") == 0 && how_much_read == 1 && stk->size > 0) {
-        printf("%d\n", StackPop(stk, errors));
-    } else if (strcmp(command, "SUB") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, b - a);
-    } else if (strcmp(command, "ADD") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, b + a);
-    } else if (strcmp(command, "HLT") == 0 && how_much_read == 1) {
-        return 1;
-    } else if (strcmp(command, "MUL") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, a * b);
-    } else if (strcmp(command, "SQRT") == 0 && how_much_read == 1 && stk->size > 0) {
-        StackPush(stk, (int) sqrt(StackPop(stk, errors)));
-    } else if (strcmp(command, "DIV") == 0 && how_much_read == 1 && stk->size > 1) {
-        int a = StackPop(stk, errors);
-        int b = StackPop(stk, errors);
-        StackPush(stk, (int) ((double) b / a));
-    } else {
-        printf("Wrong command. Try Again\n");
-    }
-    if (!(*errors))  {
-        *errors = StackVerify(stk);
-    }
-    return 0;
-}
