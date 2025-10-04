@@ -25,13 +25,13 @@ int main() {
 }
 
 
-int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_file_name) {
-    /*printf("\n\n\n");
+/*int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_file_name) {
+    printf("\n\n\n");
     long file_size = GetFileSize(source);
     char* text = GetText(source, file_size);
 
     printf("%s", text);
-    return NULL;*/
+    return NULL;
 
     FILE *asm_code_file = fopen(asm_code_file_name, "r");
     FILE *byte_code_file = fopen(byte_code_file_name, "w");
@@ -56,6 +56,24 @@ int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_fil
 
     }
 
+    fclose(asm_code_file);
+    fclose(byte_code_file);
+    return 0;
+}*/
+
+int CreateByteCodeFile(const char* asm_code_file_name, const char* byte_code_file_name) {
+    FILE *asm_code_file = fopen(asm_code_file_name, "r");
+    FILE *byte_code_file = fopen(byte_code_file_name, "w");
+    int how_many_read = 0;
+    char command[20];
+    int number = 0;
+    while (((how_many_read = fscanf(asm_code_file, "%s", &command)) > 0)) {
+        if (strcmp(command, "PUSH") == 0) {
+            fscanf(asm_code_file, "%d", &number);
+            how_many_read++;
+        }
+        AddCommandToFile(byte_code_file, how_many_read, command, number);
+    }
     fclose(asm_code_file);
     fclose(byte_code_file);
     return 0;

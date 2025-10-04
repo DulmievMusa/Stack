@@ -51,7 +51,7 @@ int main() {
         printf("Найдена строка: '%s'\n", token);
         token = strtok(NULL, "\n");
     }*/
-   int number_of_elements;
+   int number_of_elements = 0;
    int* byte_code = ReadByteCode(ByteCodeFile, &number_of_elements);
    RunProgramm(&stk, byte_code, number_of_elements);
    /*for (int i = 0; i < number_of_elements; i++) {
@@ -72,41 +72,55 @@ int RunProgramm(Stack* stk, int* byte_code, int number_of_elements) {
     while (index < number_of_elements) {
         
         command = byte_code[index];
-        printf("num %d, index %d, command %d\n", number_of_elements, index, command);
+        //printf("num %d, index %d, command %d\n", number_of_elements, index, command);
         int a = 0;
         int b = 0;
         switch (command) {
         case 0:
             return 0;
-        case 1: 
+        case 1:
             index++;
             StackPush(stk, byte_code[index]);
             break;
         case 2:
-            a = StackPop(stk, &errors);
-            b = StackPop(stk, &errors);
-            StackPush(stk, a * b);
+            if (stk->size > 1) { 
+                a = StackPop(stk, &errors);
+                b = StackPop(stk, &errors);
+                StackPush(stk, a * b);
+            }
             break;
         case 3:
-            a = StackPop(stk, &errors);
-            b = StackPop(stk, &errors);
-            StackPush(stk, b - a);
+            if (stk->size > 1) { 
+                a = StackPop(stk, &errors);
+                b = StackPop(stk, &errors);
+                StackPush(stk, b - a);
+            }
             break;
         case 4:
-            printf("%d\n", StackPop(stk, &errors));
+            if (stk->size > 0) { 
+                printf("%d\n", StackPop(stk, &errors));
+            }
             break;
         case 5:
-            a = StackPop(stk, &errors);
-            b = StackPop(stk, &errors);
-            StackPush(stk, b + a);
+            if (stk->size > 1) { 
+                //printf("size %d\n", stk->size);
+                a = StackPop(stk, &errors);
+                b = StackPop(stk, &errors);
+            //printf("a %d b %d size %d\n", a, b, stk->size);
+                StackPush(stk, b + a);
+            }
             break;
         case 6:
-            a = StackPop(stk, &errors);
-            b = StackPop(stk, &errors);
-            StackPush(stk, (int) ((double) b / a));
+            if (stk->size > 1) { 
+                a = StackPop(stk, &errors);
+                b = StackPop(stk, &errors);
+                StackPush(stk, (int) ((double) b / a));
+            }
             break;
         case 7:
-            StackPush(stk, (int) sqrt(StackPop(stk, &errors)));
+            if (stk->size > 0) {
+                StackPush(stk, (int) sqrt(StackPop(stk, &errors)));
+            }
             break;
         default:
             printf("Unknown command\n");
