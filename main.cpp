@@ -20,9 +20,9 @@ int main() {
     Stack stk = {};
     StackInit(&stk, 6);
     StackDump(&stk);
-   int number_of_elements = 0;
-   int* byte_code = ReadByteCode(ByteCodeFile, &number_of_elements);
-   RunProgramm(&stk, byte_code, number_of_elements);
+    int number_of_elements = 0;
+    int* byte_code = ReadByteCode(ByteCodeFile, &number_of_elements);
+    RunProgramm(&stk, byte_code, number_of_elements);
    
 }
 
